@@ -54,8 +54,13 @@ func min(a,b int) int{
 	}
 	return b
 }
+// Shuffle function implements the shuffling of decks
+func Shuffle(gs GameState) GameState{
+	ret :=clone(gs)
+}
 func main(){
-	cards := deck.New(deck.Deck(3),deck.Shuffle)
+	var gs GameState
+	cards := deck.New(deck.Deck(3), deck.Shuffle)
 	var card deck.Card
 	var player, dealer Hand
 	for i :=0; i<2; i++{
@@ -116,5 +121,48 @@ func main(){
 
 func draw(cards []deck.Card) (deck.Card,[]deck.Card){
 	return cards[0], cards[1:]
+
+}
+// State type
+type State int8
+// Declaring constants
+const(
+	StatePlayerTurn State=iota
+	StateDealerTurn
+	StateHandOver
+)
+// GameState Struct
+type GameState struct{
+	Deck []deck.Card
+	State State
+	Player Hand
+	Dealer Hand
+}
+// CurrentPlayer function
+func (gs *GameState) CurrentPlayer() *Hand{
+	switch gs.State{
+	case StatePlayerTurn:
+		return &gs.Player
+	case StateDealerTurn:
+		return &gs.Dealer
+	default:
+		panic("It isn't currently any players turn")
+
+
+		
+	}
+}
+func clone(gs GameState) GameState{
+	ret := GameState{
+		Deck: make([]deck.Card,len(gs.Deck)),
+		State:  gs.State,
+		Player: make(Hand,len(gs.Player)),
+		Dealer: make(Hand,len(gs.Dealer)),
+		
+	}
+	copy(ret.Deck, gs.Deck)
+	copy(ret.Player, gs.Dealer)
+	copy(ret.Dealer, gs.Dealer)
+	return ret
 
 }
