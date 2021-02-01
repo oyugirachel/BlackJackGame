@@ -42,9 +42,22 @@ func main(){
 		fmt.Println("What will you do? (h)it,(s)tand")
 		// Reading the users input
 		fmt.Scanf("%s\n",&input)
+		switch input{
+		case "h":
+			card, cards= draw(cards)
+			player = append(player, card)
+
+		}
 	
 
 	}
+	// Printing out the final scores
+	fmt.Println("**FINAL HANDS**")
+	fmt.Println("Player",player)
+	fmt.Println("Dealer",dealer)
+	
+
+
    
 	
 }
