@@ -18,7 +18,7 @@ func (h Hand) String() string {
 	return strings.Join(strs, ",")
 }
 
-// DealerString
+// DealerString function
 func (h Hand) DealerString() string {
 	return h[0].String() + ",**HIDDEN**"
 
@@ -61,48 +61,57 @@ func min(a, b int) int {
 // Shuffle function implements the shuffling of decks
 func Shuffle(gs GameState) GameState {
 	ret := clone(gs)
+	ret.Deck = deck.New(deck.Deck(3), deck.Shuffle)
+	return ret
 }
-func main() {
-	var gs GameState
-	cards := deck.New(deck.Deck(3), deck.Shuffle)
+
+// Deal function
+func Deal(gs GameState) GameState {
+	ret := clone(gs)
+	ret.Player = make(Hand, 0, 5)
+	ret.Dealer = make(Hand, 0, 5)
 	var card deck.Card
-	var player, dealer Hand
+	// iterate to give each player two cards
 	for i := 0; i < 2; i++ {
-		for _, hand := range []*Hand{&player, &dealer} {
-			card, cards = draw(cards)
-			// Points to a slice
-			*hand = append(*hand, card)
-
-		}
-	}
-	var input string
-	// s representing standing
-	for input != "s" {
-		fmt.Println("Player:", player, "\nScore", player.MinScore())
-		fmt.Println("Dealer:", dealer, "\nScore", dealer.MinScore())
-		fmt.Println("What will you do? (h)it,(s)tand")
-		// Reading the users input
-		fmt.Scanf("%s\n", &input)
-		switch input {
-		case "h":
-			card, cards = draw(cards)
-			player = append(player, card)
-
-		}
+		card, ret.Deck = draw(ret.Deck)
+		ret.Player = append(ret.Player, card)
+		card, ret.Deck = draw(ret.Deck)
+		ret.Dealer = append(ret.Dealer, card)
 
 	}
-	// if dealer score <= 16 we hit
-	// if dealer has a soft 17, then we hit
-	for dealer.Score() <= 16 || (dealer.Score() == 17 && dealer.MinScore() != 17) {
-		card, cards = draw(cards)
-		dealer = append(dealer, card)
+	ret.State = StatePlayerTurn
+	return ret
+}
 
+// Stand function
+func Stand(gs GameState) GameState {
+	ret := clone(gs)
+	ret.State++
+	return ret
+}
+
+// Hit function
+func Hit(gs GameState) GameState {
+	ret := clone(gs)
+	hand := ret.CurrentPlayer()
+	var card deck.Card
+	card, ret.Deck = draw(ret.Deck)
+	*hand = append(*hand, card)
+	if hand.Score() > 21 {
+		Stand(ret)
 	}
-	pScore, dScore := player.Score(), dealer.Score()
+
+	return ret
+}
+
+// EndHand function
+func EndHand(gs GameState) GameState {
+	ret := clone(gs)
+	pScore, dScore := ret.Player.Score(), ret.Dealer.Score()
 	// Printing out the final scores
 	fmt.Println("**FINAL HANDS**")
-	fmt.Println("Player", pScore)
-	fmt.Println("Dealer", dScore)
+	fmt.Println("Player", ret.Player, "\nScore:", pScore)
+	fmt.Println("Dealer", ret.Dealer, "\n Score", dScore)
 	switch {
 	case pScore > 21:
 		fmt.Println("You busted")
@@ -116,7 +125,53 @@ func main() {
 		fmt.Println("Draw")
 
 	}
+	fmt.Println()
+	ret.Player = nil
+	ret.Dealer = nil
+	return ret
 
+}
+func main() {
+	var gs GameState
+	gs = Shuffle(gs)
+	// for loop to iterate over after a set nember of hands/hit
+	for i:=0; i<10; i++{
+		gs = Deal(gs)
+	var input string
+	// s representing standing
+	for gs.State == StatePlayerTurn {
+		fmt.Println("Player:", gs.Player)
+		fmt.Println("Dealer:", gs.Dealer.DealerString())
+		fmt.Println("What will you do? (h)it,(s)tand")
+		// Reading the users input
+		fmt.Scanf("%s\n", &input)
+		switch input {
+		case "h":
+			gs = Hit(gs)
+		case "s":
+			gs = Stand(gs)
+		default:
+			fmt.Println("Invalid Option", input)
+		}
+
+	}
+	for gs.State == StateDealerTurn {
+		if gs.Dealer.Score() <= 16 || (gs.Dealer.Score() == 17 && gs.Dealer.MinScore() != 17) {
+			gs = Hit(gs)
+
+		} else {
+			gs = Stand(gs)
+		}
+
+	}
+	// if dealer score <= 16 we hit
+	// if dealer has a soft 17, then we hit
+	gs = EndHand(gs)
+
+
+
+	}
+	
 }
 
 func draw(cards []deck.Card) (deck.Card, []deck.Card) {
