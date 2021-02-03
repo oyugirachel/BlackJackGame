@@ -15,7 +15,7 @@ type AI interface {
 
 type dealerAI struct{}
 
-func (ai dealerAI) Bet() int {
+func (ai dealerAI) Bet(shuffled bool) int {
 	// noop
 	return 1
 }

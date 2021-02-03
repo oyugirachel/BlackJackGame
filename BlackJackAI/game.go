@@ -44,31 +44,23 @@ func New(opts Options) Game {
 	return g
 }
 
-// New function
-func New() Game {
-	return Game{
-		state:    statePlayerTurn,
-		dealerAI: dealerAI{},
-		balance:  0,
-	}
-}
-
 // Game struct
 type Game struct {
 	// unexported fields
-	deck            []deck.Card
-	state           state
-	player          []deck.Card
-	dealer          []deck.Card
-	dealerAI        AI
-	balance         int
 	nDecks          int
 	nHands          int
 	blackjackPayout float64
-	player          []hand
-	handIdx         int
-	playerBet       int
-	balance         int
+
+	state state
+	deck  []deck.Card
+
+	player    []hand
+	handIdx   int
+	playerBet int
+	balance   int
+
+	dealer   []deck.Card
+	dealerAI AI
 }
 
 // currentHand function
@@ -108,6 +100,12 @@ func deal(g *Game) {
 		card, g.deck = draw(g.deck)
 		g.dealer = append(g.dealer, card)
 
+	}
+	g.player = []hand{
+		{
+			cards: playerHand,
+			bet:   g.playerBet,
+		},
 	}
 	g.state = statePlayerTurn
 
@@ -194,7 +192,7 @@ func MoveSplit(g *Game) error {
 
 // MoveDouble function
 func MoveDouble(g *Game) error {
-	if len(g.player) != 2 {
+	if len(g.currentHand()) != 2 {
 		return errors.New("can only double on a hand with 2 cards")
 	}
 	g.playerBet *= 2
