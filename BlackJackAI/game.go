@@ -275,7 +275,7 @@ func Score(hand ...deck.Card) int {
 }
 
 // Soft returns true if the score of a hand is a soft score - that is if an ace
-// is being counted as 11 points.
+// is being counted as 11 points
 func Soft(hand ...deck.Card) bool {
 	minScore := minScore(hand...)
 	score := Score(hand...)
