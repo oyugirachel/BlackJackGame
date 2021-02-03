@@ -1,67 +1,67 @@
 package blackjack
 
+import (
+	"fmt"
+
+	"github.com/oyugirachel/deck"
+)
 
 // AI interface
 type AI interface {
 	Bet() int
 	Play(hand []deck.Card, dealer deck.Card) Move
 	Results(hand [][]deck.Card, dealer []deck.Card)
-
-
-
 }
-// HumanAI struct
-type HumanAI struct{
 
+type dealerAI struct{}
 
-}
-// Bet function
-func (ai *HumanAI) Bet() int{
+func (ai dealerAI) Bet() int {
+	// noop
 	return 1
 }
-// Play function
-func (ai *HumanAI) Play(hand []deck.Card, dealer deck.Card) Move{
-	
-	for{
+
+func (ai dealerAI) Play(hand []deck.Card, dealer deck.Card) Move {
+	dScore := Score(hand...)
+	if dScore <= 16 || (dScore == 17 && Soft(hand...)) {
+		return MoveHit
+	}
+	return MoveStand
+}
+
+func (ai dealerAI) Results(hand [][]deck.Card, dealer []deck.Card) {
+	// noop
+}
+
+func HumanAI() AI {
+	return humanAI{}
+}
+
+type humanAI struct{}
+
+func (ai humanAI) Bet() int {
+	return 1
+}
+
+func (ai humanAI) Play(hand []deck.Card, dealer deck.Card) Move {
+	for {
 		fmt.Println("Player:", hand)
-	    fmt.Println("Dealer:", dealer)
-	    fmt.Println("What will you do? (h)it,(s)tand")
-		 
-		 var input string
-		// Reading the users input
-		
-	    fmt.Scanf("%s\n", &input)
-	    switch input {
-	    case "h":
-		  return Hit
-	    case "s":
-		  return Stand
-	    default:
-		fmt.Println("Invalid Option", input)
+		fmt.Println("Dealer:", dealer)
+		fmt.Println("What will you do? (h)it, (s)tand")
+		var input string
+		fmt.Scanf("%s\n", &input)
+		switch input {
+		case "h":
+			return MoveHit
+		case "s":
+			return MoveStand
+		default:
+			fmt.Println("Invalid option:", input)
+		}
 	}
-	}
-	
-}
-// Results function
-func (ai *HumanAI) Results(hand [][]deck.Card, dealer []deck.Card){
-	fmt.Println("**FINAL HANDS**")
-	fmt.Println("Player", hand)
-	fmt.Println("Dealer", dealer)
 }
 
-// filler to be implemented later
-
-// Move type
-type Move func(GameState) GameState
-// GameState struct
-type GameState struct{}
-// Hit function
-func Hit(gs GameState) GameState{
-	return gs
+func (ai humanAI) Results(hand [][]deck.Card, dealer []deck.Card) {
+	fmt.Println("**FINAL HANDs**")
+	fmt.Println("Player:", hand)
+	fmt.Println("Dealer:", dealer)
 }
-// Stand function
-func Stand(gs GameState) GameState{
-	return gs
-}
-
-
