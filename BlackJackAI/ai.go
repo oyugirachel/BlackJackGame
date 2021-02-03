@@ -32,6 +32,7 @@ func (ai dealerAI) Results(hand [][]deck.Card, dealer []deck.Card) {
 	// noop
 }
 
+// HumanAI function
 func HumanAI() AI {
 	return humanAI{}
 }
@@ -54,6 +55,10 @@ func (ai humanAI) Play(hand []deck.Card, dealer deck.Card) Move {
 			return MoveHit
 		case "s":
 			return MoveStand
+		case "d":
+			return MoveDouble
+		case "p":
+			return MoveSplit
 		default:
 			fmt.Println("Invalid option:", input)
 		}
