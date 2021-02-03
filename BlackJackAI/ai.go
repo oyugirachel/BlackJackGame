@@ -25,7 +25,7 @@ func (ai dealerAI) Play(hand []deck.Card, dealer deck.Card) Move {
 	if dScore <= 16 || (dScore == 17 && Soft(hand...)) {
 		return MoveHit
 	}
-	return MoveStand
+	return Move
 }
 
 func (ai dealerAI) Results(hand [][]deck.Card, dealer []deck.Card) {
@@ -74,7 +74,7 @@ func (ai humanAI) Play(hand []deck.Card, dealer deck.Card) Move {
 func (ai humanAI) Results(hand [][]deck.Card, dealer []deck.Card) {
 	fmt.Println("**FINAL HANDs**")
 	fmt.Println("Player:", hand)
-	for _, h := range hands {
+	for _, h := range hand {
 		fmt.Println(" ", h)
 	}
 	fmt.Println("Dealer:", dealer)

@@ -1,7 +1,6 @@
 package blackjack
 
 import (
-	"fmt"
 	"github.com/oyugirachel/deck"
 )
 
@@ -84,6 +83,9 @@ type hand struct {
 // bet function
 func bet(g *Game, ai AI, shuffled bool) {
 	bet := ai.Bet(shuffled)
+	if bet < 100 {
+		panic("bet must be at least 100")
+	}
 	g.playerBet = bet
 }
 
@@ -96,7 +98,7 @@ func deal(g *Game) {
 	// iterate to give each player two cards
 	for i := 0; i < 2; i++ {
 		card, g.deck = draw(g.deck)
-		g.player = append(g.player, card)
+		playerHand = append(playerHand, card)
 		card, g.deck = draw(g.deck)
 		g.dealer = append(g.dealer, card)
 
@@ -201,7 +203,7 @@ func MoveDouble(g *Game) error {
 }
 
 // MoveStand function
-func MoveStand(g *Game) {
+func MoveStand(g *Game) error {
 	if g.state == stateDealerTurn {
 		g.state++
 		return nil
