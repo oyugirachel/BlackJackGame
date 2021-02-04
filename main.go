@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/oyugirachel/BlackJackGame/BlackJackAI"
+	"github.com/oyugirachel/BlackJackGame/blackjackai"
 	"github.com/oyugirachel/deck"
 )
 
@@ -29,27 +29,27 @@ func (ai *basicAI) Bet(shuffled bool) int {
 	}
 }
 
-func (ai *basicAI) Play(hand []deck.Card, dealer deck.Card) BlackJackAI.Move {
-	score := BlackJackAI.Score(hand...)
+func (ai *basicAI) Play(hand []deck.Card, dealer deck.Card) blackjackai.Move {
+	score := blackjackai.Score(hand...)
 	if len(hand) == 2 {
 		if hand[0] == hand[1] {
-			cardScore := BlackJackAI.Score(hand[0])
+			cardScore := blackjackai.Score(hand[0])
 			if cardScore >= 8 && cardScore != 10 {
-				return BlackJackAI.MoveSplit
+				return blackjackai.MoveSplit
 			}
 		}
-		if (score == 10 || score == 11) && !BlackJackAI.Soft(hand...) {
-			return BlackJackAI.MoveDouble
+		if (score == 10 || score == 11) && !blackjackai.Soft(hand...) {
+			return blackjackai.MoveDouble
 		}
 	}
-	dScore := BlackJackAI.Score(dealer)
+	dScore := blackjackai.Score(dealer)
 	if dScore >= 5 && dScore <= 6 {
-		return BlackJackAI.MoveStand
+		return blackjackai.MoveStand
 	}
 	if score < 13 {
-		return BlackJackAI.MoveHit
+		return blackjackai.MoveHit
 	}
-	return BlackJackAI.MoveStand
+	return blackjackai.MoveStand
 }
 
 func (ai *basicAI) Results(hands [][]deck.Card, dealer []deck.Card) {
@@ -64,7 +64,7 @@ func (ai *basicAI) Results(hands [][]deck.Card, dealer []deck.Card) {
 }
 
 func (ai *basicAI) count(card deck.Card) {
-	score := BlackJackAI.Score(card)
+	score := blackjackai.Score(card)
 	switch {
 	case score >= 10:
 		ai.score--
@@ -74,13 +74,13 @@ func (ai *basicAI) count(card deck.Card) {
 	ai.seen++
 }
 func main() {
-	opts := BlackJackAI.Options{
+	opts := blackjackai.Options{
 		Decks:           5,
 		Hands:           1000,
 		BlackjackPayout: 1.5,
 	}
 
-	game := BlackJackAI.New(opts)
+	game := blackjackai.New(opts)
 	winnings := game.Play(&basicAI{
 		decks: 5,
 	})

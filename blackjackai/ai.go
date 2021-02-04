@@ -1,4 +1,4 @@
-package blackjack
+package blackjackai
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func (ai dealerAI) Play(hand []deck.Card, dealer deck.Card) Move {
 	if dScore <= 16 || (dScore == 17 && Soft(hand...)) {
 		return MoveHit
 	}
-	return Move
+	return MoveStand
 }
 
 func (ai dealerAI) Results(hand [][]deck.Card, dealer []deck.Card) {

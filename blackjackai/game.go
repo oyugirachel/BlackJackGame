@@ -1,7 +1,8 @@
-package blackjack
+package blackjackai
 
 import (
 	"errors"
+
 	"github.com/oyugirachel/deck"
 )
 
@@ -25,9 +26,9 @@ type Options struct {
 // New function
 func New(opts Options) Game {
 	g := Game{
-		state:   statePlayerTurn,
+		state:    statePlayerTurn,
 		dealerAI: dealerAI{},
-		balance: 0,
+		balance:  0,
 	}
 	if opts.Decks == 0 {
 		opts.Decks = 3
@@ -67,7 +68,7 @@ type Game struct {
 func (g *Game) currentHand() *[]deck.Card {
 	switch g.state {
 	case statePlayerTurn:
-		return &g.player
+		return &g.player[g.handIdx].cards
 	case stateDealerTurn:
 		return &g.dealer
 	default:
@@ -91,14 +92,18 @@ func bet(g *Game, ai AI, shuffled bool) {
 }
 
 // Deal function
+
 func deal(g *Game) {
 
-	g.player = make([]deck.Card, 0, 5)
+	g.handIdx = 0
+
+	playerHand := make([]deck.Card, 0, 5)
 	g.dealer = make([]deck.Card, 0, 5)
 	var card deck.Card
 	// iterate to give each player two cards
 	for i := 0; i < 2; i++ {
 		card, g.deck = draw(g.deck)
+
 		playerHand = append(playerHand, card)
 		card, g.deck = draw(g.deck)
 		g.dealer = append(g.dealer, card)
@@ -195,7 +200,7 @@ func MoveSplit(g *Game) error {
 
 // MoveDouble function
 func MoveDouble(g *Game) error {
-	if len(g.currentHand()) != 2 {
+	if len(*g.currentHand()) != 2 {
 		return errors.New("can only double on a hand with 2 cards")
 	}
 	g.playerBet *= 2
