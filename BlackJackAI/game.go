@@ -1,6 +1,7 @@
 package blackjack
 
 import (
+	"errors"
 	"github.com/oyugirachel/deck"
 )
 
@@ -24,9 +25,9 @@ type Options struct {
 // New function
 func New(opts Options) Game {
 	g := Game{
-		state:    statePlayerTurn,
+		state:   statePlayerTurn,
 		dealerAI: dealerAI{},
-		balance:  0,
+		balance: 0,
 	}
 	if opts.Decks == 0 {
 		opts.Decks = 3
